@@ -34,5 +34,6 @@
 
     <color name="azulbt">#416CDA </color>
     <color name="out_line">#38171717</color>
+    <color name="placeholder_bg">#dddddd</color>
 
 </resources>

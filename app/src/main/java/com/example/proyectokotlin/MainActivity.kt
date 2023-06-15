@@ -6,8 +6,12 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.facebook.shimmer.ShimmerFrameLayout
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
@@ -18,14 +22,14 @@ import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.ktx.storage
 import com.squareup.picasso.Picasso
 
+
+@Suppress("DEPRECATION")
 class MainActivity : AppCompatActivity() {
 
 
     private lateinit var rvLocations: RecyclerView
     private lateinit var adapter: MainAdapter
-
-    private lateinit var locationsData: Locations
-
+    private val viewModel by lazy { ViewModelProviders.of(this).get(MainViewModel::class.java) }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,43 +45,20 @@ class MainActivity : AppCompatActivity() {
         rvLocations.layoutManager = LinearLayoutManager(this)
         rvLocations.adapter = adapter
 
-        val dummyList = mutableListOf<Locations>()
-        dummyList.add(Locations("https://firebasestorage.googleapis.com/v0/b/holo-af489.appspot.com/o/paisaje1.png?alt=media&token=d5044efe-687b-42dc-9c5f-175167580a3e",
-        "Lorem ipsum dolor sit amet consectetur adipiscing elit, iaculis tristique eget pellentesque fames enim, himenaeos dignissim eros curae faucibus per.",
-        "Imagen"))
-        dummyList.add(Locations("https://firebasestorage.googleapis.com/v0/b/holo-af489.appspot.com/o/paisaje1.png?alt=media&token=d5044efe-687b-42dc-9c5f-175167580a3e",
-            "Lorem ipsum dolor sit amet consectetur adipiscing elit, iaculis tristique eget pellentesque fames enim, himenaeos dignissim eros curae faucibus per.",
-            "Imagen"))
-        dummyList.add(Locations("https://firebasestorage.googleapis.com/v0/b/holo-af489.appspot.com/o/paisaje1.png?alt=media&token=d5044efe-687b-42dc-9c5f-175167580a3e",
-            "Lorem ipsum dolor sit amet consectetur adipiscing elit, iaculis tristique eget pellentesque fames enim, himenaeos dignissim eros curae faucibus per.",
-            "Imagen"))
-
-        adapter.setListData(dummyList)
-        adapter.notifyDataSetChanged()
-
-        //getImage()
+        observeData()
 
     }
 
+    fun observeData(){
+        var container: ShimmerFrameLayout = findViewById(R.id.shimmer_view_container)
+        container.startShimmer()
+        viewModel.fetchLocationData().observe(this, Observer {
+            container.stopShimmer()
+            container.hideShimmer()
+            container.visibility = View.GONE
+            adapter.setListData(it)
+            adapter.notifyDataSetChanged()
+        })
+    }
 
-    /*private fun getImage(){
-        var dbLocation = FirebaseFirestore.getInstance()
-        dbLocation.collection("locations").document("Guanajuato")
-            .get()
-            .addOnSuccessListener {document->
-                if (document.data != null){
-                    val location = document.toObject(Locations::class.java)
-                    locationsData = location!!
-
-                }
-
-                tvPrueba.setText(locationsData.info.toString())
-
-                Picasso.get()
-                    .load(locationsData.img.toString())
-                    .resize(540,650)
-                    .into(imgLocation)
-
-            }
-    }*/
 }

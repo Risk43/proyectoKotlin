@@ -12,33 +12,27 @@
         android:id="@+id/ivIlocation"
         android:layout_width="140dp"
         android:layout_height="110dp"
-        android:layout_margin="10dp"/>
+        android:layout_margin="10dp"
+        android:background="@color/placeholder_bg"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <TextView
+        <View
             android:id="@+id/tvNameL"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:fontFamily="@font/inter_medium"
-            android:text="Destino"
-            android:textAlignment="center"
-            android:textColor="@color/black"
-            android:textSize="20dp" />
+            android:layout_height="28dp"
+            android:layout_marginStart="10dp"
+            android:background="@color/placeholder_bg"/>
 
-        <TextView
+        <View
             android:id="@+id/tvInfo"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="78dp"
             android:layout_margin="10dp"
-            android:fontFamily="@font/inter_thin"
-            android:justificationMode="inter_word"
-            android:textColor="@color/black"
-            android:textSize="12dp" />
+            android:background="@color/placeholder_bg"/>
 
     </LinearLayout>
 
