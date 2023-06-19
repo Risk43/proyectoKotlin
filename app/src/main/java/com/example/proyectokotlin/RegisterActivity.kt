@@ -23,7 +23,6 @@ class RegisterActivity : AppCompatActivity() {
     private lateinit var etName: EditText
     private lateinit var etLName: EditText
 
-    private lateinit var mAuth: FirebaseAuth
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -64,7 +63,6 @@ class RegisterActivity : AppCompatActivity() {
                         "Email" to email,
                         "RegisterDate" to dataRegister
                     ))
-
                     goMain()
                 }
                 else Toast.makeText(this, "Error en el registro", Toast.LENGTH_SHORT).show()

@@ -1,5 +1,6 @@
 package com.example.proyectokotlin
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -45,20 +46,31 @@ class MainActivity : AppCompatActivity() {
         rvLocations.layoutManager = LinearLayoutManager(this)
         rvLocations.adapter = adapter
 
+
         observeData()
+
 
     }
 
-    fun observeData(){
+    private fun observeData(){
         var container: ShimmerFrameLayout = findViewById(R.id.shimmer_view_container)
         container.startShimmer()
         viewModel.fetchLocationData().observe(this, Observer {
             container.stopShimmer()
-            container.hideShimmer()
             container.visibility = View.GONE
             adapter.setListData(it)
             adapter.notifyDataSetChanged()
+
+            adapter.setOnItemClickListener(object : MainAdapter.onItemClickListener{
+                override fun onItemClick(position: Int) {
+                    val intent = Intent(this@MainActivity,LocationsActivity::class.java)
+
+                    intent.putExtra("img",it[position].img)
+                    intent.putExtra("info",it[position].info)
+                    intent.putExtra("name",it[position].name)
+                    startActivity(intent)
+                }
+            })
         })
     }
-
 }

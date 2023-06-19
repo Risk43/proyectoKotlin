@@ -12,14 +12,27 @@ import com.bumptech.glide.Glide
 class MainAdapter(private val context: Context): RecyclerView.Adapter<MainAdapter.MainViewHolder>() {
 
     private var datalist= mutableListOf<Locations>()
+    private lateinit var mListener: onItemClickListener
 
     fun setListData(data: MutableList<Locations>){
         datalist = data
     }
 
+    interface onItemClickListener{
+        fun onItemClick(position: Int)
+
+    }
+
+    fun setOnItemClickListener(listener: onItemClickListener){
+
+        mListener = listener
+
+    }
+
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainViewHolder {
         val view = LayoutInflater.from(context).inflate(R.layout.location_row,parent,false)
-        return MainViewHolder(view)
+        return MainViewHolder(view,mListener)
     }
 
     override fun getItemCount(): Int {
@@ -36,18 +49,23 @@ class MainAdapter(private val context: Context): RecyclerView.Adapter<MainAdapte
         holder.bindView(location)
     }
 
-    inner class MainViewHolder(itemView: View):RecyclerView.ViewHolder(itemView){
+    inner class MainViewHolder(itemView: View, listener: onItemClickListener):RecyclerView.ViewHolder(itemView){
 
          private lateinit var tvName: TextView
          private lateinit var tvInfo: TextView
 
         fun bindView(locations: Locations){
             Glide.with(context).load(locations.img).into(itemView.findViewById(R.id.ivIlocation))
-
             tvName = itemView.findViewById<TextView?>(R.id.tvNameL)
             tvName.text = locations.name
             tvInfo = itemView.findViewById(R.id.tvInfo)
             tvInfo.text = locations.info
+        }
+
+        init {
+            itemView.setOnClickListener{
+                listener.onItemClick(adapterPosition)
+            }
 
         }
 
