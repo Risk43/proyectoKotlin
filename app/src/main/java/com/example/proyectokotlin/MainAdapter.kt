@@ -1,7 +1,6 @@
 package com.example.proyectokotlin
 
 import android.content.Context
-import android.text.Layout
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,17 +23,19 @@ class MainAdapter(private val context: Context): RecyclerView.Adapter<MainAdapte
     }
 
     fun setOnItemClickListener(listener: onItemClickListener){
-
         mListener = listener
 
     }
 
+    fun setFilterList(data: MutableList<Locations>){
+        datalist = data
+        notifyDataSetChanged()
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainViewHolder {
         val view = LayoutInflater.from(context).inflate(R.layout.location_row,parent,false)
         return MainViewHolder(view,mListener)
     }
-
     override fun getItemCount(): Int {
         if(datalist.size>0){
             return datalist.size
@@ -43,12 +44,10 @@ class MainAdapter(private val context: Context): RecyclerView.Adapter<MainAdapte
             return 0
         }
     }
-
     override fun onBindViewHolder(holder: MainViewHolder, position: Int) {
         val location = datalist[position]
         holder.bindView(location)
     }
-
     inner class MainViewHolder(itemView: View, listener: onItemClickListener):RecyclerView.ViewHolder(itemView){
 
          private lateinit var tvName: TextView
