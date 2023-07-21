@@ -76,6 +76,7 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.google.android.material.navigation.NavigationView
+
         android:id="@+id/navView"
         android:layout_width="180dp"
         android:layout_height="wrap_content"
