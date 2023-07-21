@@ -27,10 +27,6 @@ class MainAdapter(private val context: Context): RecyclerView.Adapter<MainAdapte
 
     }
 
-    fun setFilterList(data: MutableList<Locations>){
-        datalist = data
-        notifyDataSetChanged()
-    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainViewHolder {
         val view = LayoutInflater.from(context).inflate(R.layout.location_row,parent,false)
