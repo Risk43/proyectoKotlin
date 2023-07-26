@@ -1,7 +1,8 @@
-package com.example.proyectokotlin
+package com.example.proyectokotlin.models.res
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.example.proyectokotlin.models.Locations
 import com.google.firebase.firestore.FirebaseFirestore
 
 class Repo {
@@ -23,3 +24,4 @@ class Repo {
         return mutableData
     }
 }
+

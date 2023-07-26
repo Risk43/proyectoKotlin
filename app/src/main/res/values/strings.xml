@@ -2,5 +2,6 @@
     <string name="app_name">proyectoKotlin</string>
     <string name="open">Open</string>
     <string name="close">Close</string>
+    <string name="prefs_file">com.example.proyectokotlin.PREFERENCE_FILE_KEY</string>
 
 </resources>

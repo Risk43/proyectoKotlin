@@ -1,8 +1,9 @@
-package com.example.proyectokotlin
+package com.example.proyectokotlin.models
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.proyectokotlin.models.res.Repo
 
 class MainViewModel: ViewModel() {
 
@@ -13,7 +14,6 @@ class MainViewModel: ViewModel() {
         repo.getLocationData().observeForever(){ locationList->
             mutableData.value = locationList
         }
-
         return mutableData
     }
 

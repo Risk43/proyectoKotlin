@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@mipmap/bg"
-    tools:context=".RegisterActivity">
+    tools:context=".activities.RegisterActivity">
 
     <TextView
         android:id="@+id/textView2"
@@ -89,7 +89,6 @@
         android:width="190dp"
         android:backgroundTint="@color/azulbt"
         android:hint="Registrate"
-        android:onClick="register"
         android:textAlignment="center"
         android:textColorHint="@color/white"
         android:textSize="26dp"

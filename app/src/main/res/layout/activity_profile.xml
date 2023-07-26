@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activities.ProfileActivity"
+    android:background="@mipmap/bg_vert">
+
+    <LinearLayout
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_marginTop="10dp"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent">
+
+            <ImageView
+                android:id="@+id/ivBack"
+                android:layout_height="50dp"
+                android:layout_width="50dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginLeft="20dp"
+                android:background="@drawable/arrow_left"/>
+
+            <ImageView
+                android:id="@+id/ivSingOut"
+                android:layout_height="50dp"
+                android:layout_width="50dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginLeft="250dp"
+                android:background="@drawable/exit_icon_white"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:orientation="vertical"
+            >
+
+            <ImageView
+                android:layout_height="250dp"
+                android:layout_width="250dp"
+                android:background="@drawable/account_circle_outline"
+                android:layout_gravity="center"/>
+
+            <TextView
+                android:id="@+id/tvProfile"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:text="Name"
+                android:textColor="@color/white"
+                android:textSize="40dp"
+                android:layout_gravity="center"
+                android:fontFamily="@font/inter_medium"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent">
+
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_marginTop="20dp"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_height="45dp"
+                android:layout_width="match_parent"
+                android:orientation="horizontal"
+                android:layout_marginTop="100dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:background="@drawable/profile_data_layout">
+
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:textSize="22dp"
+                    android:text="Name"
+                    android:fontFamily="@font/inter_medium"
+                    android:textColor="#AE7C7C7C"/>
+
+                <TextView
+                    android:id="@+id/tvProfileName"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_marginLeft="90dp"
+                    android:textSize="22dp"
+                    android:text="Name"
+                    android:fontFamily="@font/inter_medium"
+                    android:textColor="#000000"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_height="45dp"
+                android:layout_width="match_parent"
+                android:orientation="horizontal"
+                android:layout_marginTop="20dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:background="@drawable/profile_data_layout">
+
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:textSize="22dp"
+                    android:text="Last Name"
+                    android:fontFamily="@font/inter_medium"
+                    android:textColor="#AE7C7C7C"/>
+
+                <TextView
+                    android:id="@+id/tvProfileLName"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_marginLeft="36dp"
+                    android:textSize="22dp"
+                    android:text="Last Name"
+                    android:fontFamily="@font/inter_medium"
+                    android:textColor="#000000"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_height="45dp"
+                android:layout_width="match_parent"
+                android:orientation="horizontal"
+                android:layout_marginTop="20dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:background="@drawable/profile_data_layout">
+
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:textSize="22dp"
+                    android:text="Email"
+                    android:fontFamily="@font/inter_medium"
+                    android:textColor="#AE7C7C7C"/>
+
+                <TextView
+                    android:id="@+id/tvProfileEmail"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_marginLeft="95dp"
+                    android:textSize="22dp"
+                    android:text="Email"
+                    android:fontFamily="@font/inter_medium"
+                    android:textColor="#000000"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

@@ -16,7 +16,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <TextView
@@ -37,6 +37,7 @@
             android:layout_margin="10dp"
             android:fontFamily="@font/inter_thin"
             android:justificationMode="inter_word"
+            android:text="Descripción"
             android:textColor="@color/black"
             android:textSize="12dp" />
 

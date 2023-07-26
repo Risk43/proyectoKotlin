@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".LocationsActivity"
+    tools:context=".activities.LocationsActivity"
     android:background="@mipmap/bg"
     android:orientation="vertical">
 
@@ -69,12 +69,5 @@
                 android:textSize="16dp" />
 
         </LinearLayout>
-
-
-
     </LinearLayout>
-
-
-
-
 </LinearLayout>

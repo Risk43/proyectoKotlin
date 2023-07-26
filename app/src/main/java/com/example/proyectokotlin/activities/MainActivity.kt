@@ -1,9 +1,9 @@
-package com.example.proyectokotlin
+package com.example.proyectokotlin.activities
 
+import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.Gravity
 import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
@@ -16,14 +16,22 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.proyectokotlin.models.Locations
+import com.example.proyectokotlin.models.MainAdapter
+import com.example.proyectokotlin.models.MainViewModel
+import com.example.proyectokotlin.R
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.google.android.material.navigation.NavigationView
-import kotlinx.coroutines.newFixedThreadPoolContext
+import com.google.firebase.auth.FirebaseAuth
 import java.util.Locale
-
+enum class ProviderType{
+    EMAIL_PASSWORD
+}
 
 @Suppress("DEPRECATION")
 class MainActivity : AppCompatActivity() {
+
+
 
     private lateinit var toogle: ActionBarDrawerToggle
     private lateinit var rvLocations: RecyclerView
@@ -32,10 +40,14 @@ class MainActivity : AppCompatActivity() {
     private var globalList = mutableListOf<Locations>()
     private val viewModel by lazy { ViewModelProviders.of(this).get(MainViewModel::class.java) }
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        val bundle: Bundle? = intent.extras
+        val email = bundle?.getString("email")
+        val provider = bundle?.getString("provider")
 
         adapter = MainAdapter(this)
         rvLocations = findViewById(R.id.rvLocations)
@@ -46,12 +58,25 @@ class MainActivity : AppCompatActivity() {
         rvLocations.layoutManager = LinearLayoutManager(this)
         rvLocations.adapter = adapter
 
+        val prefs = getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE).edit()
+        prefs.putString("email",email)
+        prefs.putString("provider", provider)
+        prefs.apply()
 
-        showMenu()
-        observeData()
+        val prefsRec = getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE)
+        val session = prefsRec.getString("email", null)
+
+        if (session != null) {
+            modules(session)
+        }
         globalList.clear()
 
 
+    }
+
+    fun modules(session: String){
+        showMenu(session)
+        observeData()
     }
 
     private fun observeData(){
@@ -88,16 +113,16 @@ class MainActivity : AppCompatActivity() {
                 }
             })
 
-            adapter.setOnItemClickListener(object : MainAdapter.onItemClickListener{
+            adapter.setOnItemClickListener(object : MainAdapter.onItemClickListener {
                 override fun onItemClick(position: Int) {
                         if (globalList.isEmpty()){
-                            val intent = Intent(this@MainActivity,LocationsActivity::class.java)
+                            val intent = Intent(this@MainActivity, LocationsActivity::class.java)
                             intent.putExtra("img",it[position].img)
                             intent.putExtra("info",it[position].info)
                             intent.putExtra("name",it[position].name)
                             startActivity(intent)
                         }else{
-                            val intent = Intent(this@MainActivity,LocationsActivity::class.java)
+                            val intent = Intent(this@MainActivity, LocationsActivity::class.java)
                             intent.putExtra("img",globalList[position].img)
                             intent.putExtra("info",globalList[position].info)
                             intent.putExtra("name",globalList[position].name)
@@ -108,7 +133,7 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-    private fun showMenu(){
+    private fun showMenu(session: String){
 
         val drawerLayout: DrawerLayout = findViewById(R.id.drawerLayout)
         val navView: NavigationView = findViewById(R.id.navView)
@@ -117,7 +142,7 @@ class MainActivity : AppCompatActivity() {
             drawerLayout.openDrawer(GravityCompat.START)
         })
 
-        toogle = ActionBarDrawerToggle(this,drawerLayout,R.string.open,R.string.close)
+        toogle = ActionBarDrawerToggle(this,drawerLayout, R.string.open, R.string.close)
         drawerLayout.addDrawerListener(toogle)
         toogle.syncState()
 
@@ -125,9 +150,9 @@ class MainActivity : AppCompatActivity() {
 
         navView.setNavigationItemSelectedListener {
             when(it.itemId){
-                R.id.nav_profile -> Toast.makeText(applicationContext,"Perfil",Toast.LENGTH_SHORT).show()
+                R.id.nav_profile -> goProfile(session, ProviderType.EMAIL_PASSWORD)
                 R.id.nav_fav -> Toast.makeText(applicationContext,"Favoritos",Toast.LENGTH_SHORT).show()
-                R.id.nav_exit -> Toast.makeText(applicationContext,"Salir",Toast.LENGTH_SHORT).show()
+                R.id.nav_exit -> singOut()
             }
             true
         }
@@ -140,4 +165,23 @@ class MainActivity : AppCompatActivity() {
 
         return super.onOptionsItemSelected(item)
     }
+
+    private fun goProfile(session: String, provider: ProviderType){
+            val intent = Intent(this, ProfileActivity::class.java)
+            intent.putExtra("email", session)
+            intent.putExtra("provider", provider.name)
+            startActivity(intent)
+    }
+
+    private fun singOut(){
+        val prefs = getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE).edit()
+        prefs.clear()
+        prefs.apply()
+
+        FirebaseAuth.getInstance().signOut()
+        val intent = Intent(this, LoginActivity::class.java)
+        startActivity(intent)
+    }
 }
+
+

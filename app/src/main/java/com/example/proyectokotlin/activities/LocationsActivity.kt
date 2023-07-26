@@ -1,13 +1,11 @@
-package com.example.proyectokotlin
+package com.example.proyectokotlin.activities
 
-import android.annotation.SuppressLint
-import android.content.Intent
-import android.media.Image
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
+import com.example.proyectokotlin.R
 
 class LocationsActivity : AppCompatActivity() {
 
