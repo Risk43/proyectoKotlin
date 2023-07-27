@@ -5,36 +5,50 @@ import android.content.Intent
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.Editable
 import android.view.View
 import android.widget.Button
+import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import com.bumptech.glide.Glide
 import com.example.proyectokotlin.R
-import com.google.common.base.MoreObjects.ToStringHelper
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
+import kotlin.properties.Delegates
 
 class ProfileActivity : AppCompatActivity() {
 
+    private var editName by Delegates.notNull<String>()
+    private var editLName by Delegates.notNull<String>()
+
     private lateinit var session: String
+
+    private lateinit var lyProfileData: LinearLayout
+    private lateinit var lyEditData: LinearLayout
 
     private lateinit var profile: TextView
     private lateinit var profileName: TextView
     private lateinit var profileLName: TextView
     private lateinit var profileEmail: TextView
 
+    private lateinit var etEditName: EditText
+    private lateinit var etEditLName: EditText
+
     private lateinit var ivBack: ImageView
     private lateinit var ivSingOut: ImageView
     private lateinit var ivProfilePhoto: ImageView
 
     private lateinit var btUpload: Button
+    private lateinit var btEdit: Button
+    private lateinit var btSave: Button
     private lateinit var btEditPhoto: ImageButton
 
     private lateinit var progressBar: ProgressBar
@@ -67,23 +81,36 @@ class ProfileActivity : AppCompatActivity() {
     }
 
     private fun initVars(){
+        lyProfileData = findViewById(R.id.lyProfileData)
+        lyEditData = findViewById(R.id.lyEditData)
+
         profile = findViewById(R.id.tvProfile)
         profileName = findViewById(R.id.tvProfileName)
         profileLName = findViewById(R.id.tvProfileLName)
         profileEmail = findViewById(R.id.tvProfileEmail)
+
+        etEditName = findViewById(R.id.etEditName)
+        etEditLName = findViewById(R.id.etEditLName)
+
         ivProfilePhoto = findViewById(R.id.ivProfilePhoto)
+
         btUpload = findViewById(R.id.btUpload)
+        btEdit = findViewById(R.id.btEdit)
+        btSave = findViewById(R.id.btSave)
         btEditPhoto = findViewById(R.id.btEditPhoto)
+
         progressBar = findViewById(R.id.progresBar)
+
         storageReference = FirebaseStorage.getInstance().reference
 
+        lyEditData.visibility = View.INVISIBLE
         btUpload.visibility = View.INVISIBLE
     }
     private fun initComponents(session: String, provider: ProviderType){
         setData(session)
         goMain(session, provider)
         singOut()
-        uploadPhoto()
+        clickActions(session)
         updatePhoto(session)
     }
 
@@ -112,7 +139,8 @@ class ProfileActivity : AppCompatActivity() {
                         val email = document.getString("email")
                         val photo = document.getString("photo")
 
-
+                        editName = name.toString()
+                        editLName = lName.toString()
                         profile.text = name
                         profileName.text = name
                         profileLName.text = lName
@@ -124,7 +152,7 @@ class ProfileActivity : AppCompatActivity() {
         }
     }
 
-    private fun uploadPhoto(){
+    private fun clickActions(session: String){
         btEditPhoto.setOnClickListener {
             resultLauncher.launch("image/*")
             btUpload.visibility = View.VISIBLE
@@ -133,14 +161,27 @@ class ProfileActivity : AppCompatActivity() {
             selectPhoto()
             btUpload.visibility = View.INVISIBLE
         }
+        btEdit.setOnClickListener {
+            lyProfileData.visibility = View.INVISIBLE
+            lyEditData.visibility = View.VISIBLE
+            btEdit.visibility = View.INVISIBLE
+
+        }
+        btSave.setOnClickListener {
+            updateData()
+            setData(session)
+            lyProfileData.visibility = View.VISIBLE
+            lyEditData.visibility = View.INVISIBLE
+            btEdit.visibility = View.VISIBLE
+        }
     }
 
 
     private val resultLauncher = registerForActivityResult(
         ActivityResultContracts.GetContent()){
-        imageUri = it
-        ivProfilePhoto.setBackgroundResource(R.color.transparent)
-        ivProfilePhoto.setImageURI(imageUri)
+            imageUri = it
+            ivProfilePhoto.setBackgroundResource(R.color.transparent)
+            ivProfilePhoto.setImageURI(imageUri)
     }
 
 
@@ -182,6 +223,32 @@ class ProfileActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    private fun updateData(){
+        val name = etEditName.text.toString()
+        val lName = etEditLName.text.toString()
+
+        progressBar.visibility = View.VISIBLE
+
+        if (name.isEmpty() || lName.isEmpty()){
+            Toast.makeText(this, "Error al actualizar", Toast.LENGTH_SHORT).show()
+        }else{
+            val map = hashMapOf<String, Any>()
+            map.put("name", name)
+            map.put("lastName", lName)
+            FirebaseFirestore.getInstance().collection("users").document(session).update(map).addOnCompleteListener { task ->
+                if (task.isSuccessful){
+                    Toast.makeText(this,"Información actualizada", Toast.LENGTH_SHORT).show()
+                }else{
+                    Toast.makeText(this, "Error al actualizar", Toast.LENGTH_SHORT).show()
+                }
+                progressBar.visibility = View.GONE
+                etEditName.text = null
+                etEditLName.text = null
+            }
+        }
+
     }
 
     private fun goMain(session: String, provider: ProviderType) {
