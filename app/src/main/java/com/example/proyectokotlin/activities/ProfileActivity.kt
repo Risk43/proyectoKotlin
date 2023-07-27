@@ -51,7 +51,7 @@ class ProfileActivity : AppCompatActivity() {
     private lateinit var progressBar: ProgressBar
 
     private lateinit var storageReference: StorageReference
-    private lateinit var rute_storage: String
+    private lateinit var ruteStorage: String
     private lateinit var imageUri: Uri
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -182,8 +182,8 @@ class ProfileActivity : AppCompatActivity() {
 
     private fun selectPhoto(){
         progressBar.visibility = View.VISIBLE
-        rute_storage = "users/" + session
-        val reference = storageReference.child(rute_storage)
+        ruteStorage = "users/" + session
+        val reference = storageReference.child(ruteStorage)
         reference.putFile(imageUri).addOnCompleteListener { task->
             if (task.isSuccessful){
                 reference.downloadUrl.addOnSuccessListener { uri->
