@@ -105,10 +105,9 @@ class ProfileActivity : AppCompatActivity() {
     }
     private fun initComponents(session: String, provider: ProviderType){
         setData(session)
+        clickActions(session)
         goMain(session, provider)
         singOut()
-        clickActions(session)
-        updatePhoto(session)
     }
 
     private fun singOut(){
@@ -154,6 +153,7 @@ class ProfileActivity : AppCompatActivity() {
         }
         btUpload.setOnClickListener {
             selectPhoto()
+            updatePhoto(session)
             btUpload.visibility = View.INVISIBLE
         }
         btEdit.setOnClickListener {
