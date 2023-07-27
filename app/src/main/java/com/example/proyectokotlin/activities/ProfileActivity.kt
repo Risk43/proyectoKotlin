@@ -26,9 +26,6 @@ import kotlin.properties.Delegates
 
 class ProfileActivity : AppCompatActivity() {
 
-    private var editName by Delegates.notNull<String>()
-    private var editLName by Delegates.notNull<String>()
-
     private lateinit var session: String
 
     private lateinit var lyProfileData: LinearLayout
@@ -139,8 +136,6 @@ class ProfileActivity : AppCompatActivity() {
                         val email = document.getString("email")
                         val photo = document.getString("photo")
 
-                        editName = name.toString()
-                        editLName = lName.toString()
                         profile.text = name
                         profileName.text = name
                         profileLName.text = lName
