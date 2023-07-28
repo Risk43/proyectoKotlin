@@ -18,6 +18,7 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import com.bumptech.glide.Glide
 import com.example.proyectokotlin.R
+import com.google.common.base.MoreObjects.ToStringHelper
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
@@ -52,7 +53,7 @@ class ProfileActivity : AppCompatActivity() {
 
     private lateinit var storageReference: StorageReference
     private lateinit var ruteStorage: String
-    private lateinit var imageUri: Uri
+    private var imageUri: Uri? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -150,11 +151,20 @@ class ProfileActivity : AppCompatActivity() {
         btEditPhoto.setOnClickListener {
             resultLauncher.launch("image/*")
             btUpload.visibility = View.VISIBLE
+            btEdit.visibility = View.INVISIBLE
         }
         btUpload.setOnClickListener {
-            selectPhoto()
-            updatePhoto(session)
-            btUpload.visibility = View.INVISIBLE
+            if (imageUri != null){
+                selectPhoto()
+                updatePhoto(session)
+                btUpload.visibility = View.INVISIBLE
+                btEdit.visibility = View.VISIBLE
+            }else{
+                Toast.makeText(this,"Error al cargar la imagen", Toast.LENGTH_SHORT).show()
+                btUpload.visibility = View.INVISIBLE
+                btEdit.visibility = View.VISIBLE
+            }
+
         }
         btEdit.setOnClickListener {
             lyProfileData.visibility = View.INVISIBLE
@@ -176,7 +186,9 @@ class ProfileActivity : AppCompatActivity() {
         ActivityResultContracts.GetContent()){
             imageUri = it
             ivProfilePhoto.setBackgroundResource(R.color.transparent)
+        if (imageUri != null){
             ivProfilePhoto.setImageURI(imageUri)
+        }
     }
 
 
@@ -184,7 +196,7 @@ class ProfileActivity : AppCompatActivity() {
         progressBar.visibility = View.VISIBLE
         ruteStorage = "users/" + session
         val reference = storageReference.child(ruteStorage)
-        reference.putFile(imageUri).addOnCompleteListener { task->
+        reference.putFile(imageUri!!).addOnCompleteListener { task->
             if (task.isSuccessful){
                 reference.downloadUrl.addOnSuccessListener { uri->
                     val downloadUri = uri.toString()
@@ -228,6 +240,7 @@ class ProfileActivity : AppCompatActivity() {
 
         if (name.isEmpty() || lName.isEmpty()){
             Toast.makeText(this, "Error al actualizar", Toast.LENGTH_SHORT).show()
+            progressBar.visibility = View.GONE
         }else{
             val map = hashMapOf<String, Any>()
             map.put("name", name)

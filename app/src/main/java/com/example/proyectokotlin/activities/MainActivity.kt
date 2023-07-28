@@ -76,10 +76,10 @@ class MainActivity : AppCompatActivity() {
 
     fun modules(session: String){
         showMenu(session)
-        observeData()
+        observeData(session)
     }
 
-    private fun observeData(){
+    private fun observeData(session: String){
         var container: ShimmerFrameLayout = findViewById(R.id.shimmer_view_container)
         container.startShimmer()
         viewModel.fetchLocationData().observe(this, Observer {
@@ -120,12 +120,16 @@ class MainActivity : AppCompatActivity() {
                             intent.putExtra("img",it[position].img)
                             intent.putExtra("info",it[position].info)
                             intent.putExtra("name",it[position].name)
+                            intent.putExtra("email", session)
+                            intent.putExtra("provider", ProviderType.EMAIL_PASSWORD)
                             startActivity(intent)
                         }else{
                             val intent = Intent(this@MainActivity, LocationsActivity::class.java)
                             intent.putExtra("img",globalList[position].img)
                             intent.putExtra("info",globalList[position].info)
                             intent.putExtra("name",globalList[position].name)
+                            intent.putExtra("email", session)
+                            intent.putExtra("provider", ProviderType.EMAIL_PASSWORD)
                             startActivity(intent)
                         }
                 }
