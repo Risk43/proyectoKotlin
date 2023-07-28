@@ -72,9 +72,11 @@
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="220dp"
+        android:layout_marginTop="-520dp"
+        android:layout_marginLeft="40dp"
+        android:layout_marginRight="40dp"
         android:fontFamily="@font/inter_medium"
-        android:textSize="28dp"
+        android:textSize="18dp"
         android:textColor="@color/black"
         android:text="No se han agregado favoritos"/>
 

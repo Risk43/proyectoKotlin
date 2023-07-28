@@ -155,10 +155,8 @@ class ProfileActivity : AppCompatActivity() {
         }
         btUpload.setOnClickListener {
             if (imageUri != null){
-                selectPhoto()
-                updatePhoto(session)
+                selectPhoto(session)
                 btUpload.visibility = View.INVISIBLE
-                btEdit.visibility = View.VISIBLE
             }else{
                 Toast.makeText(this,"Error al cargar la imagen", Toast.LENGTH_SHORT).show()
                 btUpload.visibility = View.INVISIBLE
@@ -192,7 +190,7 @@ class ProfileActivity : AppCompatActivity() {
     }
 
 
-    private fun selectPhoto(){
+    private fun selectPhoto(session: String){
         progressBar.visibility = View.VISIBLE
         ruteStorage = "users/" + session
         val reference = storageReference.child(ruteStorage)
@@ -209,6 +207,8 @@ class ProfileActivity : AppCompatActivity() {
                            }else{
                                Toast.makeText(this, task.exception?.message, Toast.LENGTH_SHORT).show()
                            }
+                           updatePhoto(session)
+                           btEdit.visibility = View.VISIBLE
                            progressBar.visibility = View.GONE
                        }
                 }
@@ -224,7 +224,6 @@ class ProfileActivity : AppCompatActivity() {
                 for (document in result){
                     if (document.getString("email") == session){
                         val photo = document.getString("photo")
-
                         Glide.with(this).load(photo).into(ivProfilePhoto)
                     }
                 }

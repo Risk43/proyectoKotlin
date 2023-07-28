@@ -61,7 +61,6 @@ class LocationsAdapter(private val context: Context): RecyclerView.Adapter<Locat
             itemView.setOnClickListener{
                 listener.onItemClick(adapterPosition)
             }
-
         }
 
     }

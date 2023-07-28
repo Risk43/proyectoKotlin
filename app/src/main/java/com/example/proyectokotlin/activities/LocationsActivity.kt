@@ -14,7 +14,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 
 class LocationsActivity : AppCompatActivity() {
 
-    private var favorite: Boolean? = false
+    private var favorite: Boolean? = null
 
     private var session: String? = null
 
@@ -29,6 +29,8 @@ class LocationsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_locations)
 
+        initVArs()
+
         val bundle: Bundle? = intent.extras
         val img = bundle?.getString("img")
         val info = bundle?.getString("info")
@@ -37,10 +39,11 @@ class LocationsActivity : AppCompatActivity() {
         val provider = bundle?.getString("provider")
         favorite = bundle?.getBoolean("favorite")
 
+
+
         session = setSharedPreferences(email,provider)
 
-        initVArs()
-        initComponents(img,info,name,session, favorite, ProviderType.EMAIL_PASSWORD)
+        initComponents(img,info,name,session, ProviderType.EMAIL_PASSWORD)
     }
 
     private fun setSharedPreferences(email: String?, provider: String?): String? {
@@ -60,19 +63,21 @@ class LocationsActivity : AppCompatActivity() {
         ivImgL = findViewById(R.id.ivImgL)
         tvInfo = findViewById(R.id.tvInfo)
         ivSetFavorite = findViewById(R.id.ivSetFavorite)
+
     }
 
-    private fun initComponents(img: String?, info: String?, name: String?, session: String?, fav: Boolean?, provider: ProviderType){
-        setData(img,info,name, fav)
+    private fun initComponents(img: String?, info: String?, name: String?, session: String?, provider: ProviderType){
+        setup(session,img, info, name)
+        setData(img,info,name, favorite)
         clickActions(session, img, info, name)
         goMain(session, provider)
     }
 
     private fun setData(img: String?, info: String?, name: String?, fav: Boolean?){
-        if (fav != null){
-            ivSetFavorite.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.red))
-        }else{
+        if (fav != true){
             ivSetFavorite.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.out_line))
+        }else{
+            ivSetFavorite.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.red))
         }
         tvName.text = name
         tvInfo.text = info
@@ -80,42 +85,61 @@ class LocationsActivity : AppCompatActivity() {
     }
 
     private fun clickActions(session: String?, img: String?, info: String?,name: String?){
-        if (favorite != null){
             ivSetFavorite.setOnClickListener {
+                if (favorite != true){
                 ivSetFavorite.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.red))
                 registerFavorite(session,img,info,name)
+                }else{
+                    ivSetFavorite.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.out_line))
+                    deleteFavorite(session,name)
+                }
             }
-        }else{
-            ivSetFavorite.setOnClickListener {
-                ivSetFavorite.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.out_line))
-                deleteFavorite(session,name)
-            }
-        }
     }
 
     private fun registerFavorite(session: String?, img: String?, info: String?, name: String?){
+        var fav: Boolean? = null
         val name = name
         val info = info
         val img = img
-        favorite = true
+
+        if (favorite == null){
+            fav = false
+        }else{
+            fav = true
+        }
+
+
 
         FirebaseFirestore.getInstance().collection("users").document(session!!).collection("favorites").document(name!!).set(hashMapOf(
             "img" to img,
             "info" to info,
             "name" to name,
-            "favorite" to favorite
+            "favorite" to fav
         )).addOnCompleteListener{ task ->
             if(task.isSuccessful){
                 Toast.makeText(this,"Agregado a favoritos", Toast.LENGTH_SHORT).show()
+                favorite = true
             }else{
                 Toast.makeText(this,"Error al agregar a favoritos", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
+    private fun setup(session: String?, img: String?, info: String?, name: String?){
+        FirebaseFirestore.getInstance().collection("users").document(session!!).collection("favorites").get().addOnSuccessListener { result ->
+            for (document in result){
+                if (document.getString("name") == name){
+                    favorite = document.getBoolean("favorite")!!
+                    setData(img,info,name, favorite)
+                }
+            }
+        }
+    }
+
     private fun deleteFavorite(session: String?, name: String?){
-        favorite = null
+        favorite = false
         FirebaseFirestore.getInstance().collection("users").document(session!!).collection("favorites").document(name!!).delete()
+        Toast.makeText(this,"Eliminado de favoritos", Toast.LENGTH_SHORT).show()
     }
 
     private fun goMain(session: String?, provider: ProviderType) {

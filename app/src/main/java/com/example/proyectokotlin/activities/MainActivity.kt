@@ -12,6 +12,8 @@ import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -23,6 +25,7 @@ import com.example.proyectokotlin.R
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.MutableData
 import com.google.firebase.firestore.FirebaseFirestore
 import java.util.Locale
 enum class ProviderType{
@@ -32,7 +35,7 @@ enum class ProviderType{
 @Suppress("DEPRECATION")
 class MainActivity : AppCompatActivity() {
 
-    private var favorite: Boolean? = false
+    private var favorite: Boolean? = null
 
     private lateinit var toogle: ActionBarDrawerToggle
     private lateinit var rvLocations: RecyclerView
@@ -76,8 +79,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun modules(session: String){
-        showMenu(session)
         observeData(session)
+        showMenu(session)
     }
 
     private fun observeData(session: String){
@@ -121,9 +124,6 @@ class MainActivity : AppCompatActivity() {
                             intent.putExtra("img",it[position].img)
                             intent.putExtra("info",it[position].info)
                             intent.putExtra("name",it[position].name)
-                            if (favorite != null){
-                                intent.putExtra("favorite", getFavoriteLocation(session, it[position].name))
-                            }
                             intent.putExtra("email", session)
                             intent.putExtra("provider", ProviderType.EMAIL_PASSWORD)
                             startActivity(intent)
@@ -132,9 +132,6 @@ class MainActivity : AppCompatActivity() {
                             intent.putExtra("img",globalList[position].img)
                             intent.putExtra("info",globalList[position].info)
                             intent.putExtra("name",globalList[position].name)
-                            if (favorite != null){
-                                intent.putExtra("favorite", getFavoriteLocation(session, globalList[position].name))
-                            }
                             intent.putExtra("email", session)
                             intent.putExtra("provider", ProviderType.EMAIL_PASSWORD)
                             startActivity(intent)
@@ -142,17 +139,6 @@ class MainActivity : AppCompatActivity() {
                 }
             })
         })
-    }
-
-    private fun getFavoriteLocation(session: String, name: String): Boolean?{
-        FirebaseFirestore.getInstance().collection("users").document(session).collection("favorites").document(name).get().addOnSuccessListener { document ->
-            if (document != null){
-                favorite = document.data?.get("favorite") as Boolean?
-            }else{
-                favorite = false
-            }
-        }
-        return favorite
     }
 
     private fun showMenu(session: String){
