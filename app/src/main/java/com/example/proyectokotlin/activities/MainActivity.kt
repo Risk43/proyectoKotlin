@@ -17,12 +17,13 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.proyectokotlin.models.Locations
-import com.example.proyectokotlin.models.MainAdapter
+import com.example.proyectokotlin.models.LocationsAdapter
 import com.example.proyectokotlin.models.MainViewModel
 import com.example.proyectokotlin.R
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import java.util.Locale
 enum class ProviderType{
     EMAIL_PASSWORD
@@ -31,11 +32,11 @@ enum class ProviderType{
 @Suppress("DEPRECATION")
 class MainActivity : AppCompatActivity() {
 
-
+    private var favorite: Boolean? = false
 
     private lateinit var toogle: ActionBarDrawerToggle
     private lateinit var rvLocations: RecyclerView
-    private lateinit var adapter: MainAdapter
+    private lateinit var adapter: LocationsAdapter
     private lateinit var svSearch: SearchView
     private var globalList = mutableListOf<Locations>()
     private val viewModel by lazy { ViewModelProviders.of(this).get(MainViewModel::class.java) }
@@ -49,7 +50,7 @@ class MainActivity : AppCompatActivity() {
         val email = bundle?.getString("email")
         val provider = bundle?.getString("provider")
 
-        adapter = MainAdapter(this)
+        adapter = LocationsAdapter(this)
         rvLocations = findViewById(R.id.rvLocations)
         svSearch = findViewById(R.id.svSearch)
 
@@ -113,13 +114,16 @@ class MainActivity : AppCompatActivity() {
                 }
             })
 
-            adapter.setOnItemClickListener(object : MainAdapter.onItemClickListener {
+            adapter.setOnItemClickListener(object : LocationsAdapter.onItemClickListener {
                 override fun onItemClick(position: Int) {
                         if (globalList.isEmpty()){
                             val intent = Intent(this@MainActivity, LocationsActivity::class.java)
                             intent.putExtra("img",it[position].img)
                             intent.putExtra("info",it[position].info)
                             intent.putExtra("name",it[position].name)
+                            if (favorite != null){
+                                intent.putExtra("favorite", getFavoriteLocation(session, it[position].name))
+                            }
                             intent.putExtra("email", session)
                             intent.putExtra("provider", ProviderType.EMAIL_PASSWORD)
                             startActivity(intent)
@@ -128,6 +132,9 @@ class MainActivity : AppCompatActivity() {
                             intent.putExtra("img",globalList[position].img)
                             intent.putExtra("info",globalList[position].info)
                             intent.putExtra("name",globalList[position].name)
+                            if (favorite != null){
+                                intent.putExtra("favorite", getFavoriteLocation(session, globalList[position].name))
+                            }
                             intent.putExtra("email", session)
                             intent.putExtra("provider", ProviderType.EMAIL_PASSWORD)
                             startActivity(intent)
@@ -135,6 +142,17 @@ class MainActivity : AppCompatActivity() {
                 }
             })
         })
+    }
+
+    private fun getFavoriteLocation(session: String, name: String): Boolean?{
+        FirebaseFirestore.getInstance().collection("users").document(session).collection("favorites").document(name).get().addOnSuccessListener { document ->
+            if (document != null){
+                favorite = document.data?.get("favorite") as Boolean?
+            }else{
+                favorite = false
+            }
+        }
+        return favorite
     }
 
     private fun showMenu(session: String){
@@ -155,7 +173,7 @@ class MainActivity : AppCompatActivity() {
         navView.setNavigationItemSelectedListener {
             when(it.itemId){
                 R.id.nav_profile -> goProfile(session, ProviderType.EMAIL_PASSWORD)
-                R.id.nav_fav -> Toast.makeText(applicationContext,"Favoritos",Toast.LENGTH_SHORT).show()
+                R.id.nav_fav -> goFavorites(session, ProviderType.EMAIL_PASSWORD)
                 R.id.nav_exit -> singOut()
             }
             true
@@ -175,6 +193,13 @@ class MainActivity : AppCompatActivity() {
             intent.putExtra("email", session)
             intent.putExtra("provider", provider.name)
             startActivity(intent)
+    }
+
+    private fun goFavorites(session: String, provider: ProviderType){
+        val intent = Intent(this, FavoritesActivity::class.java)
+        intent.putExtra("email", session)
+        intent.putExtra("provider", provider.name)
+        startActivity(intent)
     }
 
     private fun singOut(){

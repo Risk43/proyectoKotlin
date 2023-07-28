@@ -17,4 +17,11 @@ class MainViewModel: ViewModel() {
         return mutableData
     }
 
+    fun fetchFavoriteData(session: String): LiveData<MutableList<Favorites>>{
+        val mutableData = MutableLiveData<MutableList<Favorites>>()
+        repo.getFavoritesData(session).observeForever(){ favoriteList->
+            mutableData.value = favoriteList
+        }
+        return mutableData
+    }
 }

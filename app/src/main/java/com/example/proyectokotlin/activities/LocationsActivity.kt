@@ -1,6 +1,7 @@
 package com.example.proyectokotlin.activities
 
 import android.content.Context
+import android.content.Intent
 import android.content.res.ColorStateList
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -22,6 +23,7 @@ class LocationsActivity : AppCompatActivity() {
 
     private lateinit var ivImgL: ImageView
     private lateinit var ivSetFavorite: ImageView
+    private lateinit var ivBack: ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,7 +40,7 @@ class LocationsActivity : AppCompatActivity() {
         session = setSharedPreferences(email,provider)
 
         initVArs()
-        initComponents(img,info,name,session, favorite)
+        initComponents(img,info,name,session, favorite, ProviderType.EMAIL_PASSWORD)
     }
 
     private fun setSharedPreferences(email: String?, provider: String?): String? {
@@ -60,13 +62,14 @@ class LocationsActivity : AppCompatActivity() {
         ivSetFavorite = findViewById(R.id.ivSetFavorite)
     }
 
-    private fun initComponents(img: String?, info: String?, name: String?, session: String?, fav: Boolean?){
+    private fun initComponents(img: String?, info: String?, name: String?, session: String?, fav: Boolean?, provider: ProviderType){
         setData(img,info,name, fav)
         clickActions(session, img, info, name)
+        goMain(session, provider)
     }
 
     private fun setData(img: String?, info: String?, name: String?, fav: Boolean?){
-        if (fav != false){
+        if (fav != null){
             ivSetFavorite.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.red))
         }else{
             ivSetFavorite.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.out_line))
@@ -77,7 +80,7 @@ class LocationsActivity : AppCompatActivity() {
     }
 
     private fun clickActions(session: String?, img: String?, info: String?,name: String?){
-        if (favorite != false){
+        if (favorite != null){
             ivSetFavorite.setOnClickListener {
                 ivSetFavorite.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.red))
                 registerFavorite(session,img,info,name)
@@ -111,8 +114,17 @@ class LocationsActivity : AppCompatActivity() {
     }
 
     private fun deleteFavorite(session: String?, name: String?){
-        favorite = false
+        favorite = null
         FirebaseFirestore.getInstance().collection("users").document(session!!).collection("favorites").document(name!!).delete()
     }
 
+    private fun goMain(session: String?, provider: ProviderType) {
+        ivBack = findViewById(R.id.ivBackMainLoc)
+        ivBack.setOnClickListener {
+            val intent = Intent(this, MainActivity::class.java)
+            intent.putExtra("email", session)
+            intent.putExtra("provider", provider.name)
+            startActivity(intent)
+        }
+    }
 }
